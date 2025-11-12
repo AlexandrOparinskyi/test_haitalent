@@ -15,7 +15,9 @@ logger = logging.getLogger(__name__)
 @questions_router.get("/",
                       status_code=status.HTTP_200_OK,
                       response_model=list[QuestionsModel])
-async def get_questions(session: AsyncSession = Depends(get_async_session)):
+async def get_questions(
+        session: AsyncSession = Depends(get_async_session)
+) -> list[Question]:
     try:
         questions = await session.scalars(select(Question))
         return questions.all()
@@ -29,8 +31,10 @@ async def get_questions(session: AsyncSession = Depends(get_async_session)):
 @questions_router.get("/{q_id}",
                       status_code=status.HTTP_200_OK,
                       response_model=QuestionModel)
-async def get_question(q_id: int,
-                       session: AsyncSession = Depends(get_async_session)):
+async def get_question(
+        q_id: int,
+        session: AsyncSession = Depends(get_async_session)
+) -> Question:
     try:
         question = await session.scalar(select(Question).where(
             Question.id == q_id
@@ -52,8 +56,10 @@ async def get_question(q_id: int,
 @questions_router.post("/",
                        status_code=status.HTTP_201_CREATED,
                        response_model=QuestionModel | None)
-async def create_question(question: QuestionCreateModel,
-                          session: AsyncSession = Depends(get_async_session)):
+async def create_question(
+        question: QuestionCreateModel,
+        session: AsyncSession = Depends(get_async_session)
+) -> Question | None:
     try:
         query = await session.execute(insert(Question).values(
             text=question.text
@@ -69,8 +75,10 @@ async def create_question(question: QuestionCreateModel,
 
 @questions_router.delete('/{q_id}',
                          status_code=status.HTTP_204_NO_CONTENT)
-async def delete_question(q_id: int,
-                          session: AsyncSession = Depends(get_async_session)):
+async def delete_question(
+        q_id: int,
+        session: AsyncSession = Depends(get_async_session)
+) -> None:
     try:
         await session.execute(delete(Question).where(
             Question.id == q_id

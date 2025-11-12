@@ -15,8 +15,10 @@ logger = logging.getLogger(__name__)
 @answers_router.get("/answers/{a_id}",
                     status_code=status.HTTP_200_OK,
                     response_model=AnswerModel)
-async def get_answer(a_id: int,
-                     session: AsyncSession = Depends(get_async_session)):
+async def get_answer(
+        a_id: int,
+        session: AsyncSession = Depends(get_async_session)
+) -> Answer:
     try:
         answer = await session.scalar(select(Answer).where(
             Answer.id == a_id
@@ -36,9 +38,11 @@ async def get_answer(a_id: int,
 @answers_router.post("/questions/{q_id}/answers",
                      status_code=status.HTTP_201_CREATED,
                      response_model=AnswerModel | None)
-async def create_answer(q_id: int,
-                        answer: AnswerCreateModel,
-                        session: AsyncSession = Depends(get_async_session)):
+async def create_answer(
+        q_id: int,
+        answer: AnswerCreateModel,
+        session: AsyncSession = Depends(get_async_session)
+) -> Answer | None:
     try:
         query = await session.execute(insert(Answer).values(
             question_id=q_id,
@@ -59,8 +63,10 @@ async def create_answer(q_id: int,
 
 @answers_router.delete("/answers/{a_id}",
                        status_code=status.HTTP_204_NO_CONTENT)
-async def delete_answer(a_id: int,
-                        session: AsyncSession = Depends(get_async_session)):
+async def delete_answer(
+        a_id: int,
+        session: AsyncSession = Depends(get_async_session)
+) -> None:
     try:
         await session.execute(delete(Answer).where(Answer.id == a_id))
         await session.commit()
