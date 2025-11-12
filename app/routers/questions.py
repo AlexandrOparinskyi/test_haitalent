@@ -46,6 +46,8 @@ async def get_question(
                                        f"with id {q_id}")
 
         return question
+    except HTTPException:
+        raise
     except Exception as err:
         logger.error(f"Failed to fetch question with id {q_id}: {err}")
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
